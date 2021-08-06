@@ -1,0 +1,55 @@
+version: '3'
+
+services:
+  db:
+    container_name: mysql
+    image: mysql:5.7
+    ports: 
+        - "3306:3306"
+    volumes:
+        - "vol2:/var/lib/mysql"
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+        MYSQL_ROOT_PASSWORD: dini108
+        MYSQL_DATABASE: clientes
+    networks:
+        - emonk-net
+ 
+  api_auth:
+    container_name: api_generador
+    depends_on: 
+      - db
+    image: api-gen
+    volumes:
+       - "/home/eduardo/Escritorio/curdoDocker/emonk-panel/apifinal:/usr/src/app"
+    ports:
+       - "3000:3000"
+    networks:
+       - emonk-net
+  
+  web:
+    container_name: nginx
+    image: nginx
+    ports: 
+      - "80:80"
+    networks:
+      - emonk-net
+
+  phpmyadmin:
+    container_name: phpmyadmin
+    image: phpmyadmin/phpmyadmin:latest
+    ports:
+     - "8082:80"
+    environment:
+      MYSQL_ROOT_PASSWORD: dini108
+      PMA_HOST: db
+      PMA_USER: root 
+      PMA_PASSWORD: dini108
+    networks:
+     - emonk-net
+ 
+networks:
+   emonk-net:
+volumes:
+   vol2:
+   apigeneradoravol:
